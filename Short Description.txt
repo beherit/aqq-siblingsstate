@@ -1,0 +1,1 @@
+Pokazywanie stanu metakontaktów na pasku narzêdzi w oknie rozmowy.
