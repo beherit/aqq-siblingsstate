@@ -21,7 +21,6 @@
 
 #include <vcl.h>
 #include <windows.h>
-#include <IdCoderMIME.hpp>
 #pragma hdrstop
 #pragma argsused
 #include <PluginAPI.h>
@@ -446,10 +445,8 @@ int __stdcall OnReplyList(WPARAM wParam, LPARAM lParam)
 	//Odczyt pliku INI kontaktu
 	TIniFile *Ini = new TIniFile(GetContactsUserDir()+JID+".ini");
 	//Odczyt informacji o metakontakcie
-	TIdDecoderMIME* IdDecoderMIME = new TIdDecoderMIME();
-	UnicodeString MetaParent = IdDecoderMIME->DecodeString(Ini->ReadString("Buddy", "MetaParent", ""));
+	UnicodeString MetaParent = (wchar_t*)PluginLink.CallService(AQQ_FUNCTION_BASE64,(WPARAM)Ini->ReadString("Buddy", "MetaParent", "").w_str(),0);
 	MetaParent = MetaParent.Trim();
-	delete IdDecoderMIME;
 	//Zamkniecie pliku INI kontaktu
 	delete Ini;
 	//Kontakt jest metakontaktem
@@ -641,7 +638,7 @@ extern "C" __declspec(dllexport) PPluginInfo __stdcall AQQPluginInfo(DWORD AQQVe
 {
   PluginInfo.cbSize = sizeof(TPluginInfo);
   PluginInfo.ShortName = L"SiblingsState";
-  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,0,0,0);
+  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,0,0);
   PluginInfo.Description = L"Pokazywanie stanu metakontaktów na pasku narzêdzi w oknie rozmowy.";
   PluginInfo.Author = L"Krzysztof Grochocki (Beherit)";
   PluginInfo.AuthorMail = L"kontakt@beherit.pl";
