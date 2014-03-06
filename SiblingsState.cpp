@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-// Copyright (C) 2013 Krzysztof Grochocki
+// Copyright (C) 2013-2014 Krzysztof Grochocki
 //
 // This file is part of SiblingsState
 //
@@ -55,25 +55,32 @@ bool UnloadExecuted = false;
 //Gdy zostalo uruchomione wyladowanie wtyczki wraz z zamknieciem komunikatora
 bool ForceUnloadExecuted = false;
 //FORWARD-AQQ-HOOKS----------------------------------------------------------
-int __stdcall OnActiveTab(WPARAM wParam, LPARAM lParam);
-int __stdcall OnBeforeUnload(WPARAM wParam, LPARAM lParam);
-int __stdcall OnCloseTab(WPARAM wParam, LPARAM lParam);
-int __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam);
-int __stdcall OnListReady(WPARAM wParam, LPARAM lParam);
-int __stdcall OnPrimaryTab(WPARAM wParam, LPARAM lParam);
-int __stdcall OnReplyList(WPARAM wParam, LPARAM lParam);
-int __stdcall OnWindowEvent(WPARAM wParam, LPARAM lParam);
-int __stdcall ServiceSiblingsStateItem0(WPARAM wParam, LPARAM lParam);
-int __stdcall ServiceSiblingsStateItem1(WPARAM wParam, LPARAM lParam);
-int __stdcall ServiceSiblingsStateItem2(WPARAM wParam, LPARAM lParam);
-int __stdcall ServiceSiblingsStateItem3(WPARAM wParam, LPARAM lParam);
-int __stdcall ServiceSiblingsStateItem4(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnActiveTab(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnBeforeUnload(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnCloseTab(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnListReady(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnPrimaryTab(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnWindowEvent(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall ServiceSiblingsStateItem0(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall ServiceSiblingsStateItem1(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall ServiceSiblingsStateItem2(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall ServiceSiblingsStateItem3(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall ServiceSiblingsStateItem4(WPARAM wParam, LPARAM lParam);
 //---------------------------------------------------------------------------
 
 //Pobieranie sciezko do katalogu zawierajacego informacje o kontaktach
 UnicodeString GetContactsUserDir()
 {
   return StringReplace((wchar_t *)PluginLink.CallService(AQQ_FUNCTION_GETUSERDIR,0,0), "\\", "\\\\", TReplaceFlags() << rfReplaceAll) + "\\\\Data\\\\Contacts\\\\";
+}
+//---------------------------------------------------------------------------
+
+//Dekodowanie ciagu znakow z Base64
+UnicodeString DecodeBase64(UnicodeString Str)
+{
+  return (wchar_t*)PluginLink.CallService(AQQ_FUNCTION_BASE64,(WPARAM)Str.w_str(),2);
 }
 //---------------------------------------------------------------------------
 
@@ -135,27 +142,27 @@ void OpenMetaTab(int Item)
 //---------------------------------------------------------------------------
 
 //Serwisy buttonow
-int __stdcall ServiceSiblingsStateItem0(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall ServiceSiblingsStateItem0(WPARAM wParam, LPARAM lParam)
 {
   OpenMetaTab(0);
   return 0;
 }
-int __stdcall ServiceSiblingsStateItem1(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall ServiceSiblingsStateItem1(WPARAM wParam, LPARAM lParam)
 {
   OpenMetaTab(1);
   return 0;
 }
-int __stdcall ServiceSiblingsStateItem2(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall ServiceSiblingsStateItem2(WPARAM wParam, LPARAM lParam)
 {
   OpenMetaTab(2);
   return 0;
 }
-int __stdcall ServiceSiblingsStateItem3(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall ServiceSiblingsStateItem3(WPARAM wParam, LPARAM lParam)
 {
   OpenMetaTab(3);
   return 0;
 }
-int __stdcall ServiceSiblingsStateItem4(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall ServiceSiblingsStateItem4(WPARAM wParam, LPARAM lParam)
 {
   OpenMetaTab(4);
   return 0;
@@ -163,7 +170,7 @@ int __stdcall ServiceSiblingsStateItem4(WPARAM wParam, LPARAM lParam)
 //---------------------------------------------------------------------------
 
 //Hook na aktwyna zakladke lub okno rozmowy
-int __stdcall OnActiveTab(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall OnActiveTab(WPARAM wParam, LPARAM lParam)
 {
   if(!ForceUnloadExecuted)
   {
@@ -244,7 +251,7 @@ int __stdcall OnActiveTab(WPARAM wParam, LPARAM lParam)
 //---------------------------------------------------------------------------
 
 //Hook na wylaczenie komunikatora poprzez usera
-int __stdcall OnBeforeUnload(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall OnBeforeUnload(WPARAM wParam, LPARAM lParam)
 {
   //Info o rozpoczeciu procedury zamykania komunikatora
   ForceUnloadExecuted = true;
@@ -254,7 +261,7 @@ int __stdcall OnBeforeUnload(WPARAM wParam, LPARAM lParam)
 //---------------------------------------------------------------------------
 
 //Hook na zamkniecie okna rozmowy lub zakladki
-int __stdcall OnCloseTab(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall OnCloseTab(WPARAM wParam, LPARAM lParam)
 {
   if(!ForceUnloadExecuted)
   {
@@ -300,7 +307,7 @@ int __stdcall OnCloseTab(WPARAM wParam, LPARAM lParam)
 //---------------------------------------------------------------------------
 
 //Hook na zmianê stanu kontaktu
-int __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam)
 {
   if(!ForceUnloadExecuted)
   {
@@ -361,7 +368,7 @@ int __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam)
 }
 //---------------------------------------------------------------------------
 
-int __stdcall OnListReady(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall OnListReady(WPARAM wParam, LPARAM lParam)
 {
   //Pobranie ID dla enumeracji kontaktów
   ReplyListID = GetTickCount();
@@ -373,7 +380,7 @@ int __stdcall OnListReady(WPARAM wParam, LPARAM lParam)
 //---------------------------------------------------------------------------
 
 //Hook na aktywna zakladke
-int __stdcall OnPrimaryTab(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall OnPrimaryTab(WPARAM wParam, LPARAM lParam)
 {
   if(!ForceUnloadExecuted)
   {
@@ -433,7 +440,7 @@ int __stdcall OnPrimaryTab(WPARAM wParam, LPARAM lParam)
 //---------------------------------------------------------------------------
 
 //Hook na enumeracje listy kontatkow
-int __stdcall OnReplyList(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam)
 {
   //Sprawdzanie ID wywolania enumeracji
   if((wParam==ReplyListID)&&(!ForceUnloadExecuted))
@@ -445,7 +452,7 @@ int __stdcall OnReplyList(WPARAM wParam, LPARAM lParam)
 	//Odczyt pliku INI kontaktu
 	TIniFile *Ini = new TIniFile(GetContactsUserDir()+JID+".ini");
 	//Odczyt informacji o metakontakcie
-	UnicodeString MetaParent = (wchar_t*)PluginLink.CallService(AQQ_FUNCTION_BASE64,(WPARAM)Ini->ReadString("Buddy", "MetaParent", "").w_str(),0);
+	UnicodeString MetaParent = DecodeBase64(Ini->ReadString("Buddy", "MetaParent", ""));
 	MetaParent = MetaParent.Trim();
 	//Zamkniecie pliku INI kontaktu
 	delete Ini;
@@ -488,7 +495,7 @@ int __stdcall OnReplyList(WPARAM wParam, LPARAM lParam)
 //---------------------------------------------------------------------------
 
 //Hook na zamkniecie/otwarcie okien
-int __stdcall OnWindowEvent(WPARAM wParam, LPARAM lParam)
+INT_PTR __stdcall OnWindowEvent(WPARAM wParam, LPARAM lParam)
 {
   //Pobranie informacji o oknie i eventcie
   TPluginWindowEvent WindowEvent = *(PPluginWindowEvent)lParam;
@@ -542,7 +549,7 @@ int __stdcall OnWindowEvent(WPARAM wParam, LPARAM lParam)
 }
 //---------------------------------------------------------------------------
 
-extern "C" int __declspec(dllexport) __stdcall Load(PPluginLink Link)
+extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
 {
   //Linkowanie wtyczki z komunikatorem
   PluginLink = *Link;
@@ -585,7 +592,7 @@ extern "C" int __declspec(dllexport) __stdcall Load(PPluginLink Link)
 }
 //---------------------------------------------------------------------------
 
-extern "C" int __declspec(dllexport) __stdcall Unload()
+extern "C" INT_PTR __declspec(dllexport) __stdcall Unload()
 {
   //Info o rozpoczeciu procedury wyladowania
   UnloadExecuted = true;
@@ -638,11 +645,11 @@ extern "C" __declspec(dllexport) PPluginInfo __stdcall AQQPluginInfo(DWORD AQQVe
 {
   PluginInfo.cbSize = sizeof(TPluginInfo);
   PluginInfo.ShortName = L"SiblingsState";
-  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,0,0);
+  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,2,0,0);
   PluginInfo.Description = L"Pokazywanie stanu metakontaktów na pasku narzêdzi w oknie rozmowy.";
-  PluginInfo.Author = L"Krzysztof Grochocki (Beherit)";
+  PluginInfo.Author = L"Krzysztof Grochocki";
   PluginInfo.AuthorMail = L"kontakt@beherit.pl";
-  PluginInfo.Copyright = L"Krzysztof Grochocki (Beherit)";
+  PluginInfo.Copyright = L"Krzysztof Grochocki";
   PluginInfo.Homepage = L"http://beherit.pl";
   PluginInfo.Flag = 0;
   PluginInfo.ReplaceDefaultModule = 0;

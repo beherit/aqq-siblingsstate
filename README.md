@@ -8,14 +8,14 @@ Znalezione błędy wtyczki należy zgłaszać w [tym temacie](http://forum.aqq.e
 
 Kontakt z autorem
 -------
-Autorem wtyczki SiblingsState jest Krzysztof Grochocki. Możesz skontaktować się z nim drogą mailową (kontakt@beherit.pl) lub poprzez Jabber (beherit@aqq.eu).
+Autorem wtyczki SiblingsState jest Krzysztof Grochocki. Możesz skontaktować się z nim drogą mailową (kontakt@beherit.pl) lub poprzez Jabber (im@beherit.pl).
 
 Licencja
 -------
 Wtyczka SiblingsState objęta jest licencją [GNU General Public License 3](http://www.gnu.org/copyleft/gpl.html).
 
     SiblingsState
-    Copyright (C) 2013  Krzysztof Grochocki
+    Copyright (C) 2013-2014  Krzysztof Grochocki
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
